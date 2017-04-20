@@ -1,0 +1,1 @@
+AI_Assignment.exe %1 %2

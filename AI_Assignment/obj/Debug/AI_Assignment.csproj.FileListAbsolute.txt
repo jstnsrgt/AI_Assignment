@@ -1,0 +1,6 @@
+c:\users\lenovo\documents\visual studio 2017\Projects\AI_Assignment\AI_Assignment\bin\Debug\AI_Assignment.exe.config
+c:\users\lenovo\documents\visual studio 2017\Projects\AI_Assignment\AI_Assignment\bin\Debug\AI_Assignment.exe
+c:\users\lenovo\documents\visual studio 2017\Projects\AI_Assignment\AI_Assignment\bin\Debug\AI_Assignment.pdb
+c:\users\lenovo\documents\visual studio 2017\Projects\AI_Assignment\AI_Assignment\obj\Debug\AI_Assignment.csprojResolveAssemblyReference.cache
+c:\users\lenovo\documents\visual studio 2017\Projects\AI_Assignment\AI_Assignment\obj\Debug\AI_Assignment.exe
+c:\users\lenovo\documents\visual studio 2017\Projects\AI_Assignment\AI_Assignment\obj\Debug\AI_Assignment.pdb

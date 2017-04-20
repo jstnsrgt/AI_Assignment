@@ -1,0 +1,5 @@
+C:\Users\LENOVO\documents\visual studio 2017\Projects\AI_Assignment\AI_Assignment\bin\Debug\AI_Assignment.exe.config
+C:\Users\LENOVO\documents\visual studio 2017\Projects\AI_Assignment\AI_Assignment\bin\Debug\AI_Assignment.exe
+C:\Users\LENOVO\documents\visual studio 2017\Projects\AI_Assignment\AI_Assignment\bin\Debug\AI_Assignment.pdb
+C:\Users\LENOVO\documents\visual studio 2017\Projects\AI_Assignment\AI_Assignment\obj\Debug\AI_Assignment.exe
+C:\Users\LENOVO\documents\visual studio 2017\Projects\AI_Assignment\AI_Assignment\obj\Debug\AI_Assignment.pdb
