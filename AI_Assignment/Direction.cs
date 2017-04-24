@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace AI_Assignment
 {
+    /// <summary>
+    /// Direction of node expansions and cell placement
+    /// </summary>
     public enum Direction
     {
         Up,

@@ -1,0 +1,6 @@
+C:\Users\Justin\Documents\Git\AI_Assignment\AI_Assignment\bin\Release\AI_Assignment.exe.config
+C:\Users\Justin\Documents\Git\AI_Assignment\AI_Assignment\bin\Release\AI_Assignment.exe
+C:\Users\Justin\Documents\Git\AI_Assignment\AI_Assignment\bin\Release\AI_Assignment.pdb
+C:\Users\Justin\Documents\Git\AI_Assignment\AI_Assignment\obj\Release\AI_Assignment.exe
+C:\Users\Justin\Documents\Git\AI_Assignment\AI_Assignment\obj\Release\AI_Assignment.pdb
+C:\Users\Justin\Documents\Git\AI_Assignment\AI_Assignment\obj\Release\AI_Assignment.csprojResolveAssemblyReference.cache

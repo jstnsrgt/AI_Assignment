@@ -24,17 +24,70 @@ namespace AI_Assignment
         //Contains all the Cells in the environment
         private List<Cell> _cells;
 
+
+
+
+        
+
+
+        public int Width
+        {
+            get
+            {
+                return _width;
+            }
+
+            set
+            {
+                _width = value;
+            }
+        }
+
+        public int Height
+        {
+            get
+            {
+                return _height;
+            }
+
+            set
+            {
+                _height = value;
+            }
+        }
+
+
         //public access to the main program in order to view the generated path of an algorithm
-        public Stack<Cell> Path { get => _path; set => _path = value; }
+        public Stack<Cell> Path
+        {
+            get
+            {
+                return _path;
+            }
+
+            set
+            {
+                _path = value;
+            }
+        }
 
         /// <summary>
         /// Saves the number of node expansions executed in the last algorithm that was run
         /// </summary>
-        public int NodeExpansions { get => _nodeExpansions; set => _nodeExpansions = value; }
-        public int Width { get => _width; set => _width = value; }
-        public int Height { get => _height; set => _height = value; }
+        public int NodeExpansions
+        {
+            get
+            {
+                return _nodeExpansions;
+            }
 
-        //Reference to the starting Cell for the benefit of the search algorithms
+            set
+            {
+                _nodeExpansions = value;
+            }
+        }
+
+        
 
         /// <summary>
         /// Constructor takes in a path to a valid map file in order to read and process that data into
@@ -80,7 +133,7 @@ namespace AI_Assignment
             }
 
             //initialises the stack path and list objects to be utilised in various searching algorithms
-            _path = new Stack<Cell>();
+            Path = new Stack<Cell>();
             _list = new List<Cell>();
 
             //retrieve position data for start cell
@@ -89,6 +142,7 @@ namespace AI_Assignment
             processed = str.Split(new Char[] { ',' });
             _start = FindCell(Int32.Parse(processed[0]) + 1, Int32.Parse(processed[1]) + 1);
             _start.Status = CellStatus.Start;
+            _start.Visited = true;
             _start.Parent = null;
 
             //retrieve position data for goal cell
@@ -123,9 +177,11 @@ namespace AI_Assignment
                 int x = Math.Abs(c.X - _start.X);
                 int y = Math.Abs(c.Y - _start.Y);
                 c.Cost = x + y;
+                c.AdvCost = Math.Sqrt(x * x + y * y);
                 x = Math.Abs(c.X - _goal.X);
                 y = Math.Abs(c.Y - _goal.Y);
                 c.DTG = x + y;
+                c.AdvDTG = Math.Sqrt(x * x + y * y);
             }
 
         }
@@ -197,13 +253,13 @@ namespace AI_Assignment
         /// </summary>
         public void ConsoleASCIIPrintoutFromStack(TextWriter writer)
         {
-            foreach(Cell c in _path) //set all valid cells in the path stack to path status for the purpose of printing
+            foreach(Cell c in Path) //set all valid cells in the path stack to path status for the purpose of printing
             {
                 if (c.Status != CellStatus.Goal && c.Status != CellStatus.Start)
                     c.Status = CellStatus.Path;
             }
 
-            if (_path.Count != 0)
+            if (Path.Count != 0)
             {
                 Cell c;
                 Cell[,] arr = new Cell[Width, Height];
@@ -249,7 +305,7 @@ namespace AI_Assignment
 
 
         /// <summary>
-        /// Prints out the map of the AI search challenge, with start, goal and obstructions
+        /// Prints out the map which shows A* sum values
         /// </summary>
         public void ConsoleASCIIPrintoutAStarFunction(TextWriter writer)
         {
@@ -280,7 +336,9 @@ namespace AI_Assignment
             writer.WriteLine();
         }
 
-
+        /// <summary>
+        /// Prints out the map which shows Greedy distance to goal cost
+        /// </summary>
         public void ConsoleASCIIPrintoutGreedyFunction(TextWriter writer)
         {
             Cell c;
@@ -320,48 +378,48 @@ namespace AI_Assignment
         /// <returns>A stack of cell objects which make up the final path after search algorithm finishes</returns>
         public Stack<Cell> AI_DepthSearch()
         {
-            _nodeExpansions = 0; //for tracking node expansions
+            NodeExpansions = 0; //for tracking node expansions
             int thisSize;
             int nextSize;
-            _path.Push(_start); //sets the beginning node
-            while (_path.Peek().Status != CellStatus.Goal) //runs algorithm until goal cell is discovered
+            Path.Push(_start); //sets the beginning node
+            while (Path.Peek().Status != CellStatus.Goal) //runs algorithm until goal cell is discovered
             {
-                thisSize = _path.Count;
-                Cell c = _path.Peek(); //set Cell to work with from top of stack
+                thisSize = Path.Count;
+                Cell c = Path.Peek(); //set Cell to work with from top of stack
                         //If conditions met, expand this node, set this node to visited and add node to the stack, end the direction loop
                 if (c.Up != null && !c.Up.Visited && c.Up.Status != CellStatus.Filled)
                 {
                     c = c.Up;
                     c.Visited = true;
-                    _path.Push(c);
-                    _nodeExpansions++; //track expansion
+                    Path.Push(c);
+                    NodeExpansions++; //track expansion
                 }
                 else if (c.Left != null && !c.Left.Visited && c.Left.Status != CellStatus.Filled)
                 {
                     c = c.Left;
                     c.Visited = true;
-                    _path.Push(c);
-                    _nodeExpansions++; //track expansion
+                    Path.Push(c);
+                    NodeExpansions++; //track expansion
                 }
                 else if (c.Down != null && !c.Down.Visited && c.Down.Status != CellStatus.Filled)
                 {
                     c = c.Down;
                     c.Visited = true;
-                    _path.Push(c);
-                    _nodeExpansions++; //track expansion
+                    Path.Push(c);
+                    NodeExpansions++; //track expansion
                 }
                 else if (c.Right != null && !c.Right.Visited && c.Right.Status != CellStatus.Filled)
                 {
                     c = c.Right;
                     c.Visited = true;
-                    _path.Push(c);
-                    _nodeExpansions++; //track expansion
+                    Path.Push(c);
+                    NodeExpansions++; //track expansion
                 }
-                nextSize = _path.Count;
+                nextSize = Path.Count;
                 if (nextSize - thisSize == 0)
-                    _path.Pop(); //if direction loop ends with no node expanded, pop the top node and search the previous one for more alternate paths
+                    Path.Pop(); //if direction loop ends with no node expanded, pop the top node and search the previous one for more alternate paths
             }
-            return _path;
+            return Path;
         }
 
 
@@ -377,16 +435,16 @@ namespace AI_Assignment
         /// <returns>A stack of cell objects which make up the final path after search algorithm finishes</returns>
         public Stack<Cell> AI_DepthSearch(Direction[] order)
         {
-            _nodeExpansions = 0; //for tracking node expansions
+            NodeExpansions = 0; //for tracking node expansions
             int thisSize;
             int nextSize;
-            _path.Push(_start); //sets the beginning node
-            while (_path.Peek().Status != CellStatus.Goal) //runs algorithm until goal cell is discovered
+            Path.Push(_start); //sets the beginning node
+            while (Path.Peek().Status != CellStatus.Goal) //runs algorithm until goal cell is discovered
             {
-                thisSize = _path.Count;
+                thisSize = Path.Count;
                 for (int i = 0; i < 4; i++) //each search iteration will test 4 directions in the order specified by 'order[]'
                 {
-                    Cell c = _path.Peek(); //set Cell to work with from top of stack
+                    Cell c = Path.Peek(); //set Cell to work with from top of stack
                     switch (order[i]) //check the current direction
                     {
                         case Direction.Up:
@@ -395,8 +453,8 @@ namespace AI_Assignment
                             {
                                 c = c.Up;
                                 c.Visited = true;
-                                _path.Push(c);
-                                _nodeExpansions++; //track expansion
+                                Path.Push(c);
+                                NodeExpansions++; //track expansion
                                 i = 4;
                             }
                             break;
@@ -405,8 +463,8 @@ namespace AI_Assignment
                             {
                                 c = c.Left;
                                 c.Visited = true;
-                                _path.Push(c);
-                                _nodeExpansions++; //track expansion
+                                Path.Push(c);
+                                NodeExpansions++; //track expansion
                                 i = 4;
                             }
                             break;
@@ -415,8 +473,8 @@ namespace AI_Assignment
                             {
                                 c = c.Down;
                                 c.Visited = true;
-                                _path.Push(c);
-                                _nodeExpansions++; //track expansion
+                                Path.Push(c);
+                                NodeExpansions++; //track expansion
                                 i = 4;
                             }
                             break;
@@ -425,18 +483,18 @@ namespace AI_Assignment
                             {
                                 c = c.Right;
                                 c.Visited = true;
-                                _path.Push(c);
-                                _nodeExpansions++; //track expansion
+                                Path.Push(c);
+                                NodeExpansions++; //track expansion
                                 i = 4;
                             }
                             break;
                     }
                 }
-                nextSize = _path.Count;
+                nextSize = Path.Count;
                 if(nextSize-thisSize==0)
-                    _path.Pop(); //if direction loop ends with no node expanded, pop the top node and search the previous one for more alternate paths
+                    Path.Pop(); //if direction loop ends with no node expanded, pop the top node and search the previous one for more alternate paths
             }
-            return _path;
+            return Path;
         }
 
 
@@ -451,7 +509,7 @@ namespace AI_Assignment
         /// <returns>A stack of cell objects which make up the final path after search algorithm finishes</returns>
         public Stack<Cell> AI_BreadthSearch() //
         {
-            _nodeExpansions = 0; //for tracking node expansions
+            NodeExpansions = 0; //for tracking node expansions
             bool finished = false;
             Cell c;
             _list.Add(_start); //initialise list
@@ -463,7 +521,7 @@ namespace AI_Assignment
                     c.Up.Visited = true; //set visited flag to prevent future exploration of this node
                     c.Up.Parent = c; //set the parent of this node in order to track a path back to the start
                     _list.Add(c.Up); //add this node onto the END of the list to be expanded when it arrives at the top
-                    _nodeExpansions++; //track expansion
+                    NodeExpansions++; //track expansion
                     if (c.Up.Status == CellStatus.Goal) //if this is the goal cell, cancel the search and the last element of the list will be the goal cell
                     {
                         finished = true;
@@ -476,7 +534,7 @@ namespace AI_Assignment
                     c.Left.Visited = true;
                     c.Left.Parent = c;
                     _list.Add(c.Left);
-                    _nodeExpansions++; //track expansion
+                    NodeExpansions++; //track expansion
                     if (c.Left.Status == CellStatus.Goal)
                     {
                         finished = true;
@@ -489,7 +547,7 @@ namespace AI_Assignment
                     c.Down.Visited = true;
                     c.Down.Parent = c;
                     _list.Add(c.Down);
-                    _nodeExpansions++; //track expansion
+                    NodeExpansions++; //track expansion
                     if (c.Down.Status == CellStatus.Goal)
                     {
                         finished = true;
@@ -502,7 +560,7 @@ namespace AI_Assignment
                     c.Right.Visited = true;
                     c.Right.Parent = c;
                     _list.Add(c.Right);
-                    _nodeExpansions++; //track expansion
+                    NodeExpansions++; //track expansion
                     if (c.Right.Status == CellStatus.Goal)
                     {
                         finished = true;
@@ -514,26 +572,26 @@ namespace AI_Assignment
             }
 
             //Start generating the path by pushing the goal cell (last element of the list) into the stack
-            _path.Push(_list[_list.Count - 1]);
+            Path.Push(_list[_list.Count - 1]);
 
             //initialise c to work with the goal cell
-            c = _path.Peek();
+            c = Path.Peek();
 
             //iterate through the parents of each cell to get to the starting cell, pushing each cell into the stack
             //stop when start cell is detected
             while (c != _start)
             {
                 c = c.Parent;
-                _path.Push(c);
+                Path.Push(c);
             }
 
             //Reverse the order of the stack to match expected path order of other algorithms
-            Cell[] arr = _path.ToArray();
-            _path.Clear();
+            Cell[] arr = Path.ToArray();
+            Path.Clear();
             arr.Reverse();
-            _path = new Stack<Cell>(arr);
+            Path = new Stack<Cell>(arr);
             //return the amount of cells which make up the path
-            return _path;
+            return Path;
         }
 
 
@@ -548,7 +606,7 @@ namespace AI_Assignment
         /// <returns>A stack of cell objects which make up the final path after search algorithm finishes</returns>
         public Stack<Cell> AI_BreadthSearch(Direction[] order) //
         {
-            _nodeExpansions = 0; //for tracking node expansions
+            NodeExpansions = 0; //for tracking node expansions
             bool finished = false;
             Cell c;
             _list.Add(_start); //initialise list
@@ -566,7 +624,7 @@ namespace AI_Assignment
                                 c.Up.Visited = true; //set visited flag to prevent future exploration of this node
                                 c.Up.Parent = c; //set the parent of this node in order to track a path back to the start
                                 _list.Add(c.Up); //add this node onto the END of the list to be expanded when it arrives at the top
-                                _nodeExpansions++; //track expansion
+                                NodeExpansions++; //track expansion
                                 if (c.Up.Status == CellStatus.Goal) //if this is the goal cell, cancel the search and the last element of the list will be the goal cell
                                     finished = true;
                             }
@@ -578,7 +636,7 @@ namespace AI_Assignment
                                 c.Right.Visited = true;
                                 c.Right.Parent = c;
                                 _list.Add(c.Right);
-                                _nodeExpansions++; //track expansion
+                                NodeExpansions++; //track expansion
                                 if (c.Right.Status == CellStatus.Goal)
                                     finished = true;
                             }
@@ -591,7 +649,7 @@ namespace AI_Assignment
                                 c.Down.Visited = true;
                                 c.Down.Parent = c;
                                 _list.Add(c.Down);
-                                _nodeExpansions++; //track expansion
+                                NodeExpansions++; //track expansion
                                 if (c.Down.Status == CellStatus.Goal)
                                     finished = true;
                             }
@@ -604,7 +662,7 @@ namespace AI_Assignment
                                 c.Left.Visited = true;
                                 c.Left.Parent = c;
                                 _list.Add(c.Left);
-                                _nodeExpansions++; //track expansion
+                                NodeExpansions++; //track expansion
                                 if (c.Left.Status == CellStatus.Goal)
                                     finished = true;
                             }
@@ -616,44 +674,44 @@ namespace AI_Assignment
             }
             
             //Start generating the path by pushing the goal cell (last element of the list) into the stack
-            _path.Push(_list[_list.Count-1]);
+            Path.Push(_list[_list.Count-1]);
 
             //initialise c to work with the goal cell
-            c = _path.Peek();
+            c = Path.Peek();
 
             //iterate through the parents of each cell to get to the starting cell, pushing each cell into the stack
             //stop when start cell is detected
             while (c!=_start)
             {
                 c = c.Parent;
-                _path.Push(c);
+                Path.Push(c);
             }
 
             //Reverse the order of the stack to match expected path order of other algorithms
-            Cell[] arr = _path.ToArray();
-            _path.Clear();
+            Cell[] arr = Path.ToArray();
+            Path.Clear();
             arr.Reverse();
-            _path = new Stack<Cell>(arr);
+            Path = new Stack<Cell>(arr);
             //return the amount of cells which make up the path
-            return _path;
+            return Path;
         }
 
 
 
         /// <summary>
-        /// A* algorith, uses a combination of distance cost from starting cell and straight line distance from goal cell
+        /// A* algorith, uses a combination of distance cost from starting cell and distance from goal cell
         /// to choose an appropriate path which aims to save time by guessing the best options
         /// </summary>
         /// <returns>A stack of cell objects which make up the final path after search algorithm finishes</returns>
         public Stack<Cell> AI_AStarSearch()
         {
-            _nodeExpansions = 0; //for tracking node expansions
+            NodeExpansions = 0; //for tracking node expansions
             List<Cell> routeOptions = new List<Cell>(); //list used to store cells that are valid for node expansion
-            _path.Push(_start); //push the start cell to allow node expansion based on this cell
+            Path.Push(_start); //push the start cell to allow node expansion based on this cell
             Cell c; //a cell reference to work on the current node
-            while (_path.Peek().Status != CellStatus.Goal) //runs algorithm until goal cell is discovered
+            while (Path.Peek().Status != CellStatus.Goal) //runs algorithm until goal cell is discovered
             {
-                c = _path.Peek(); //change the current active node
+                c = Path.Peek(); //change the current active node
                 routeOptions.Clear(); //clears list for new check
                 if(c.Up != null && c.Up.Status != CellStatus.Filled && c.Up.Visited == false) //only add an option if there is one
                 {
@@ -686,15 +744,15 @@ namespace AI_Assignment
                         }
                     }
                     best.Visited = true;
-                    _path.Push(best); //push the destination cell of the best Route into the path stack
-                    _nodeExpansions++; //track expansion
+                    Path.Push(best); //push the destination cell of the best Route into the path stack
+                    NodeExpansions++; //track expansion
                 }
                 else
                 {
-                    _path.Pop(); //No options available for expansion, pop current cell off the path in order to re-evaluate the previous one
+                    Path.Pop(); //No options available for expansion, pop current cell off the path in order to re-evaluate the previous one
                 }
             }
-            return _path;
+            return Path;
         }
 
 
@@ -706,13 +764,13 @@ namespace AI_Assignment
         /// <returns>A stack of cell objects which make up the final path after search algorithm finishes</returns>
         public Stack<Cell> AI_GreedyFirstSearch()
         {
-            _nodeExpansions = 0; //for tracking node expansions
+            NodeExpansions = 0; //for tracking node expansions
             List<Cell> routeOptions = new List<Cell>();
-            _path.Push(_start); //push the start cell to allow node expansion based on this cell
+            Path.Push(_start); //push the start cell to allow node expansion based on this cell
             Cell c; //a cell reference to work on the current node
-            while (_path.Peek().Status != CellStatus.Goal) //runs algorithm until goal cell is discovered
+            while (Path.Peek().Status != CellStatus.Goal) //runs algorithm until goal cell is discovered
             {
-                c = _path.Peek(); //change the current active node
+                c = Path.Peek(); //change the current active node
                 routeOptions.Clear(); //clears list for new check
                 if (c.Up != null && c.Up.Status != CellStatus.Filled && c.Up.Visited == false) //only add an option if there is one
                 {
@@ -743,15 +801,175 @@ namespace AI_Assignment
                         }
                     }
                     best.Visited = true;
-                    _path.Push(best); //push the destination cell of the best Route into the path stack
-                    _nodeExpansions++; //track expansion
+                    Path.Push(best); //push the destination cell of the best Route into the path stack
+                    NodeExpansions++; //track expansion
                 }
                 else
                 {
-                    _path.Pop(); //No options available for expansion, pop current cell off the path in order to re-evaluate the previous one
+                    Path.Pop(); //No options available for expansion, pop current cell off the path in order to re-evaluate the previous one
                 }
             }
-            return _path;
+            return Path;
+        }
+
+
+
+        /// <summary>
+        /// Similar to BFS (breadth first search), but the nodes nodes closer to the start are expanded first
+        /// </summary>
+        /// <returns>A stack of cell objects which make up the final path after search algorithm finishes</returns>
+        public Stack<Cell> AI_LowestFirstSearch() //
+        {
+            NodeExpansions = 0; //for tracking node expansions
+            bool finished = false;
+            Cell c;
+            _list.Add(_start); //initialise list
+            List<Cell> toAdd = new List<Cell>();
+            while (!finished) //runs until goal is found
+            {
+                toAdd.Clear();
+                c = _list[0]; //expand the node at the front of the list
+                if (c.Up != null && c.Up.Status != CellStatus.Filled && c.Up.Visited == false) //check if sub-node valid
+                {
+                    c.Up.Visited = true; //set visited flag to prevent future exploration of this node
+                    c.Up.Parent = c; //set the parent of this node in order to track a path back to the start
+                    toAdd.Add(c.Up); //add this node onto the END of the list to be expanded when it arrives at the top
+                    NodeExpansions++; //track expansion
+                }
+                if (c.Left != null && c.Left.Status != CellStatus.Filled && c.Left.Visited == false)
+                {
+                    //see top if statement
+                    c.Left.Visited = true;
+                    c.Left.Parent = c;
+                    toAdd.Add(c.Left);
+                    NodeExpansions++; //track expansion
+                }
+                if (c.Down != null && c.Down.Status != CellStatus.Filled && c.Down.Visited == false)
+                {
+                    //see top if statement
+                    c.Down.Visited = true;
+                    c.Down.Parent = c;
+                    toAdd.Add(c.Down);
+                    NodeExpansions++; //track expansion
+                }
+                if (c.Right != null && c.Right.Status != CellStatus.Filled && c.Right.Visited == false)
+                {
+                    //see top if statement
+                    c.Right.Visited = true;
+                    c.Right.Parent = c;
+                    toAdd.Add(c.Right);
+                    NodeExpansions++; //track expansion
+                }
+                List<Cell> order = new List<Cell>();
+                double min;
+                Cell lowest = null;
+                while (toAdd.Count > 0)
+                {
+                    min = Height * Width;
+                    foreach (Cell r in toAdd)
+                    {
+                        if (r.AdvCost < min)
+                        {
+                            min = r.AdvCost;
+                            lowest = r;
+                        }
+                    }
+                    toAdd.Remove(lowest);
+                    order.Add(lowest);
+                }
+                foreach(Cell r in order)
+                {
+                    if (r.Status == CellStatus.Goal)
+                        finished = true;
+                }
+            
+                _list.InsertRange(_list.Count,order);
+
+
+                //remove the current expanded node, as it has been explored and has not found the goal cell
+                _list.RemoveAt(0);
+            }
+
+            //Start generating the path by pushing the goal cell (last element of the list) into the stack
+            Path.Push(_list[_list.Count - 1]);
+
+            //initialise c to work with the goal cell
+            c = Path.Peek();
+
+            //iterate through the parents of each cell to get to the starting cell, pushing each cell into the stack
+            //stop when start cell is detected
+            while (c != _start)
+            {
+                c = c.Parent;
+                Path.Push(c);
+            }
+
+            //Reverse the order of the stack to match expected path order of other algorithms
+            Cell[] arr = Path.ToArray();
+            Path.Clear();
+            arr.Reverse();
+            Path = new Stack<Cell>(arr);
+            //return the amount of cells which make up the path
+            return Path;
+        }
+
+
+
+        /// <summary>
+        /// A custom, advanced iteration of the A* algorith, uses a combination of straight line distance cost from starting cell and straight line distance from goal cell
+        /// to choose an appropriate path which aims to save time by guessing the best options whilst also eliminating most stalemate expansion choices from the original A* algorithm
+        /// </summary>
+        /// <returns>A stack of cell objects which make up the final path after search algorithm finishes</returns>
+        public Stack<Cell> AI_AdvancedAStarSearch()
+        {
+            NodeExpansions = 0; //for tracking node expansions
+            List<Cell> routeOptions = new List<Cell>(); //list used to store cells that are valid for node expansion
+            Path.Push(_start); //push the start cell to allow node expansion based on this cell
+            Cell c; //a cell reference to work on the current node
+            while (Path.Peek().Status != CellStatus.Goal) //runs algorithm until goal cell is discovered
+            {
+                c = Path.Peek(); //change the current active node
+                routeOptions.Clear(); //clears list for new check
+                if (c.Up != null && c.Up.Status != CellStatus.Filled && c.Up.Visited == false) //only add an option if there is one
+                {
+                    routeOptions.Add(c.Up);
+                }
+                if (c.Left != null && c.Left.Status != CellStatus.Filled && c.Left.Visited == false) //see first if for details
+                {
+                    routeOptions.Add(c.Left);
+                }
+                if (c.Down != null && c.Down.Status != CellStatus.Filled && c.Down.Visited == false) //see first if for details   
+                {
+                    routeOptions.Add(c.Down);
+                }
+                if (c.Right != null && c.Right.Status != CellStatus.Filled && c.Right.Visited == false) //see first if for details
+                {
+                    routeOptions.Add(c.Right);
+                }
+                if (routeOptions.Count > 0)
+                {
+                    double aStarPrice;
+                    double currentMin = this.Height + this.Width; //this value is set high enough to always let the first option win
+                    Cell best = null; //need to find the best route in order to push the right cell onto the path stack
+                    foreach (Cell r in routeOptions) //use to find best route for A* based on both distance to goal and cost from start
+                    {
+                        aStarPrice = r.AdvDTG + r.AdvCost;
+                        if (aStarPrice < currentMin) //evalute best A* option based on combined cost and distance
+                        {
+                            currentMin = aStarPrice; //set the new minimum
+                            best = r; //hold onto the best Route so far
+                        }
+                    }
+                    best.Visited = true;
+                    Path.Push(best); //push the destination cell of the best Route into the path stack
+                    NodeExpansions++; //track expansion
+                }
+                else
+                {
+                    Path.Pop(); //No options available for expansion, pop current cell off the path in order to re-evaluate the previous one
+                }
+            }
+            return Path;
         }
 
 
@@ -759,7 +977,7 @@ namespace AI_Assignment
         public void Reset() //Wipes the slate clean for the next Algorithm
         {
             _list.Clear();
-            _path.Clear();
+            Path.Clear();
             foreach(Cell c in _cells)
             {
                 c.Visited = false;

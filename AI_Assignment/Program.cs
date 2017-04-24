@@ -10,15 +10,21 @@ namespace AI_Assignment
 {
     class Program
     {
+
+        /// <summary>
+        /// Main Function which runs the default program, taking in arguments passed through a batch file
+        /// 
+        /// Runs one algorithm per program execution and returns useful information
+        /// </summary>
+        /// <param name="args"></param>
         static void Main(string[] args)
         {
-            /*
+            /* USE FOR TESTING TO COLLECT DATA AND DEBUG ALGORITHMS
             string local = Directory.GetCurrentDirectory();
-            Map m1 = new Map(@local + "\\map1.txt");
+            Map m1 = new Map(@local + "\\map3.txt");
 
             TestEverything(m1, local);
             */
-
             
             Command command = new Command(args);
 
@@ -26,41 +32,39 @@ namespace AI_Assignment
 
             string local = Directory.GetCurrentDirectory();
 
+            //take a copy of variable to use in testing condition
             string mapName = command.MapName;
 
-            if (mapName.Remove(0, command.MapName.Length - 4)==".txt")
+            //clean up map parameter input
+            if (mapName.Remove(0, command.MapName.Length - 4)!=".txt") //if string does not contain '.txt' at the end
             {
-                command.MapName = command.MapName.Remove(command.MapName.Length-4,4);
+                command.MapName = command.MapName + ".txt"; //add .txt onto the end of the string
             }
-            try
+            try //failsafe for opening file
             {
-                Map m = new Map(@local + "\\" + command.MapName + ".txt");
+                Map m = new Map(@local + "\\" + command.MapName); //open up file with clean map name
 
 
                 Console.WriteLine("Filename: " + command.MapName);
 
-                switch (command.SearchMethod)
+                switch (command.SearchMethod) //Run the input Algorithm argument
                 {
                     case "DFS":
                         Console.WriteLine("Depth First Search");
-                        m.AI_DepthSearch();
+                        m.AI_DepthSearch(); //algorithm runtime
                         Console.Write("Nodes expanded: ");
-                        Console.WriteLine(m.NodeExpansions);
-                        foreach (Cell c in m.Path)
-                        {
-                            Console.WriteLine("x: " + c.X + " | y: " + c.Y);
-                        }
-                        m.ConsoleASCIIPrintoutFromStack(Console.Out);
+                        Console.WriteLine(m.NodeExpansions);  //info
+                        Console.Write("Path Count: ");
+                        Console.WriteLine(m.Path.Count);
+                        m.ConsoleASCIIPrintoutFromStack(Console.Out); //print a ASCII representation of the map and path
                         break;
                     case "BFS":
                         Console.WriteLine("Breadth First Search");
                         m.AI_BreadthSearch();
                         Console.Write("Nodes expanded: ");
                         Console.WriteLine(m.NodeExpansions);
-                        foreach (Cell c in m.Path)
-                        {
-                            Console.WriteLine("x: " + c.X + " | y: " + c.Y);
-                        }
+                        Console.Write("Path Count: ");
+                        Console.WriteLine(m.Path.Count);
                         m.ConsoleASCIIPrintoutFromStack(Console.Out);
                         break;
                     case "GBFS":
@@ -68,10 +72,8 @@ namespace AI_Assignment
                         m.AI_GreedyFirstSearch();
                         Console.Write("Nodes expanded: ");
                         Console.WriteLine(m.NodeExpansions);
-                        foreach (Cell c in m.Path)
-                        {
-                            Console.WriteLine("x: " + c.X + " | y: " + c.Y);
-                        }
+                        Console.Write("Path Count: ");
+                        Console.WriteLine(m.Path.Count);
                         m.ConsoleASCIIPrintoutFromStack(Console.Out);
                         break;
                     case "AS":
@@ -79,37 +81,53 @@ namespace AI_Assignment
                         m.AI_AStarSearch();
                         Console.Write("Nodes expanded: ");
                         Console.WriteLine(m.NodeExpansions);
-                        foreach (Cell c in m.Path)
-                        {
-                            Console.WriteLine("x: " + c.X + " | y: " + c.Y);
-                        }
+                        Console.Write("Path Count: ");
+                        Console.WriteLine(m.Path.Count);
                         m.ConsoleASCIIPrintoutFromStack(Console.Out);
                         break;
-                    case "CUS1": //uninformed
-                        Console.WriteLine("");
-
+                    case "CUS1": //uninformed custom algorithm - lowest cost first search
+                        Console.WriteLine("Lowest Cost First Search");
+                        Console.WriteLine("Expands nodes tier by tier like BFS, but prioritises the lowest cost cells to be searched first");
+                        m.AI_LowestFirstSearch();
                         Console.Write("Nodes expanded: ");
                         Console.WriteLine(m.NodeExpansions);
-                        foreach (Cell c in m.Path)
-                        {
-                            Console.WriteLine("x: " + c.X + " | y: " + c.Y);
-                        }
+                        Console.Write("Path Count: ");
+                        Console.WriteLine(m.Path.Count);
                         m.ConsoleASCIIPrintoutFromStack(Console.Out);
                         break;
-                    case "CUS2": //informed
-                        Console.WriteLine("");
-
+                    case "LCFS": //uninformed custom algorithm - lowest cost first search
+                        Console.WriteLine("Lowest Cost First Search");
+                        Console.WriteLine("Expands nodes tier by tier like BFS, but prioritises the lowest cost cells to be searched first");
+                        m.AI_LowestFirstSearch();
                         Console.Write("Nodes expanded: ");
                         Console.WriteLine(m.NodeExpansions);
-                        foreach (Cell c in m.Path)
-                        {
-                            Console.WriteLine("x: " + c.X + " | y: " + c.Y);
-                        }
+                        Console.Write("Path Count: ");
+                        Console.WriteLine(m.Path.Count);
+                        m.ConsoleASCIIPrintoutFromStack(Console.Out);
+                        break;
+                    case "AAS": //informed custom algorithm - Advanced A*
+                        Console.WriteLine("Advanced Iteration of A* Search");
+                        Console.WriteLine("Uses the straight line hypotenuse distance for calculating both cost and the distance to goal of each node");
+                        m.AI_AdvancedAStarSearch();
+                        Console.Write("Nodes expanded: ");
+                        Console.WriteLine(m.NodeExpansions);
+                        Console.Write("Path Count: ");
+                        Console.WriteLine(m.Path.Count);
+                        m.ConsoleASCIIPrintoutFromStack(Console.Out);
+                        break;
+                    case "CUS2": //informed custom algorithm - Advanced A*
+                        Console.WriteLine("Advanced Iteration of A* Search");
+                        Console.WriteLine("Uses the straight line hypotenuse distance for calculating both cost and the distance to goal of each node");
+                        m.AI_AdvancedAStarSearch();
+                        Console.Write("Nodes expanded: ");
+                        Console.WriteLine(m.NodeExpansions);
+                        Console.Write("Path Count: ");
+                        Console.WriteLine(m.Path.Count);
                         m.ConsoleASCIIPrintoutFromStack(Console.Out);
                         break;
                     default:
                         Console.WriteLine("Invalid search method input!\nPlease input:");
-                        Console.WriteLine("DFS, BFS, GBFS, AS, CUS1, CUS2");
+                        Console.WriteLine("DFS, BFS, GBFS, AS, CUS1 (or LCFS), CUS2 (or AAS)");
                         break;
                 }
             }
@@ -119,6 +137,11 @@ namespace AI_Assignment
             }
         }
 
+        /// <summary>
+        /// Tests All Algorithms along with special advanced iteration tests, prints to the infoDump.txt file
+        /// </summary>
+        /// <param name="m">Map object to test</param>
+        /// <param name="path">path string for saving to infoDump.txt in the program directory</param>
         private static void TestEverything(Map m, string path)
         {
             StreamWriter toFile = new StreamWriter(@path + "\\infoDump.txt",false);
@@ -228,6 +251,12 @@ namespace AI_Assignment
             toFile.Close();
         }
 
+        /// <summary>
+        /// Runs the DFS algorithm through every possible preferential order of direction
+        /// </summary>
+        /// <param name="allDir"></param>
+        /// <param name="m"></param>
+        /// <param name="toFile"></param>
         static void DepthSearchAllPermutations(List<Direction[]> allDir, Map m, StreamWriter toFile)
         {
             toFile.WriteLine("Breadth Search for every preferential order of direction: ");
@@ -243,9 +272,9 @@ namespace AI_Assignment
             {
                 m.Reset();
                 path[m.AI_DepthSearch(directionOrder).Count]++;
-                node[m.NodeExpansions]++;
                 //function returns a stack, stack count is the amount of cells in the path, index of dictionary is the path count.
                 //Value of dictionary is incremented to represent the number of iterations with the same path count
+                node[m.NodeExpansions]++;
             }
             toFile.WriteLine("Path Count : Iterations");
             for (int i = 0; i < size; i++)
@@ -259,7 +288,12 @@ namespace AI_Assignment
             }
         }
 
-
+        /// <summary>
+        /// Runs the BFS algorithm through every possible preferential order of direction
+        /// </summary>
+        /// <param name="allDir"></param>
+        /// <param name="m"></param>
+        /// <param name="toFile"></param>
         static void BreadthSearchAllPermutations(List<Direction[]> allDir, Map m, StreamWriter toFile)
         {
             toFile.WriteLine("Breadth Search for every preferential order of direction: ");

@@ -7,7 +7,7 @@
         Goal,   //Specifies a cell which successfully finishes the AI search
         Filled, //Specifies an unusable cell which cannot be expanded in a search
         Empty,   //Specifies a cell ready to be expanded for additional searching
-        Path
+        Path //Specifies a cell which makes up a path after an algorithm has run, used for printing the mapped out path
     }
 
 }
