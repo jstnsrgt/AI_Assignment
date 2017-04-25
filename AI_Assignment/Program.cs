@@ -19,13 +19,7 @@ namespace AI_Assignment
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            /* USE FOR TESTING TO COLLECT DATA AND DEBUG ALGORITHMS
-            string local = Directory.GetCurrentDirectory();
-            Map m1 = new Map(@local + "\\map3.txt");
-
-            TestEverything(m1, local);
-            */
-            
+           
             Command command = new Command(args);
 
             
@@ -49,6 +43,14 @@ namespace AI_Assignment
 
                 switch (command.SearchMethod) //Run the input Algorithm argument
                 {
+                    case "TestFile":
+                        Console.WriteLine("Test Run File Output");
+                        TestEverything(m,local,true);
+                        break;
+                    case "TestConsole":
+                        Console.WriteLine("Test Run Console Output");
+                        TestEverything(m,local,false);
+                        break;
                     case "DFS":
                         Console.WriteLine("Depth First Search");
                         m.AI_DepthSearch(); //algorithm runtime
@@ -126,8 +128,9 @@ namespace AI_Assignment
                         m.ConsoleASCIIPrintoutFromStack(Console.Out);
                         break;
                     default:
-                        Console.WriteLine("Invalid search method input!\nPlease input:");
+                        Console.WriteLine("Invalid search method input or Test!\nPlease input:");
                         Console.WriteLine("DFS, BFS, GBFS, AS, CUS1 (or LCFS), CUS2 (or AAS)");
+                        Console.WriteLine("TestConsole : shows test output in console, TestFile : writes test output to infoDump.txt");
                         break;
                 }
             }
@@ -142,11 +145,17 @@ namespace AI_Assignment
         /// </summary>
         /// <param name="m">Map object to test</param>
         /// <param name="path">path string for saving to infoDump.txt in the program directory</param>
-        private static void TestEverything(Map m, string path)
+        private static void TestEverything(Map m, string path, bool fileDump)
         {
-            StreamWriter toFile = new StreamWriter(@path + "\\infoDump.txt",false);
-            
-            
+            TextWriter writer;
+            if (fileDump)
+            {
+                writer = new StreamWriter(@path + "\\infoDump.txt", false);
+            }
+            else
+            {
+                writer = Console.Out;
+            }
 
             Stack<Cell> testPath = new Stack<Cell>();
             Direction[] dirTest = new Direction[4] { Direction.Up, Direction.Down, Direction.Right, Direction.Left };
@@ -186,69 +195,70 @@ namespace AI_Assignment
 
                 }
             }
-            toFile.WriteLine("\n");
-            toFile.WriteLine("Testing Everything");
-            toFile.WriteLine("Current Map");
-            m.ConsoleASCIIPrintout(toFile);
-            toFile.WriteLine("\n");
-            toFile.WriteLine("A Star Function Map");
-            m.ConsoleASCIIPrintoutAStarFunction(toFile);
-            toFile.WriteLine("\n");
-            toFile.WriteLine("Greedy Function Map");
-            m.ConsoleASCIIPrintoutGreedyFunction(toFile);
+            writer.WriteLine("\n");
+            writer.WriteLine("Testing Everything");
+            writer.WriteLine("Current Map");
+            m.ConsoleASCIIPrintout(writer);
+            writer.WriteLine("\n");
+            writer.WriteLine("A Star Function Map");
+            m.ConsoleASCIIPrintoutAStarFunction(writer);
+            writer.WriteLine("\n");
+            writer.WriteLine("Greedy Function Map");
+            m.ConsoleASCIIPrintoutGreedyFunction(writer);
 
             m.Reset();
 
-            toFile.WriteLine("\n");
-            toFile.WriteLine("Depth Search Algorithm:");
+            writer.WriteLine("\n");
+            writer.WriteLine("Depth Search Algorithm:");
             testPath = m.AI_DepthSearch();
-            m.ConsoleASCIIPrintoutFromStack(toFile);
-            toFile.Write("Path Length: ");
-            toFile.WriteLine(testPath.Count);
-            toFile.Write("Node Expansions: ");
-            toFile.WriteLine(m.NodeExpansions);
+            m.ConsoleASCIIPrintoutFromStack(writer);
+            writer.Write("Path Length: ");
+            writer.WriteLine(testPath.Count);
+            writer.Write("Node Expansions: ");
+            writer.WriteLine(m.NodeExpansions);
             m.Reset();
 
-            toFile.WriteLine("\n");
-            toFile.WriteLine("Breadth Search Algorithm:");
+            writer.WriteLine("\n");
+            writer.WriteLine("Breadth Search Algorithm:");
             testPath = m.AI_BreadthSearch();
-            m.ConsoleASCIIPrintoutFromStack(toFile);
-            toFile.Write("Path Length: ");
-            toFile.WriteLine(testPath.Count);
-            toFile.Write("Node Expansions: ");
-            toFile.WriteLine(m.NodeExpansions);
+            m.ConsoleASCIIPrintoutFromStack(writer);
+            writer.Write("Path Length: ");
+            writer.WriteLine(testPath.Count);
+            writer.Write("Node Expansions: ");
+            writer.WriteLine(m.NodeExpansions);
             m.Reset();
 
-            toFile.WriteLine("\n");
-            toFile.WriteLine("A* Search Algorithm");
+            writer.WriteLine("\n");
+            writer.WriteLine("A* Search Algorithm");
             testPath = m.AI_AStarSearch();
-            m.ConsoleASCIIPrintoutFromStack(toFile);
-            toFile.Write("Path Length: ");
-            toFile.WriteLine(testPath.Count);
-            toFile.Write("Node Expansions: ");
-            toFile.WriteLine(m.NodeExpansions);
+            m.ConsoleASCIIPrintoutFromStack(writer);
+            writer.Write("Path Length: ");
+            writer.WriteLine(testPath.Count);
+            writer.Write("Node Expansions: ");
+            writer.WriteLine(m.NodeExpansions);
             m.Reset();
 
-            toFile.WriteLine("\n");
-            toFile.WriteLine("Greedy Search Algorithm");
+            writer.WriteLine("\n");
+            writer.WriteLine("Greedy Search Algorithm");
             testPath = m.AI_GreedyFirstSearch();
-            m.ConsoleASCIIPrintoutFromStack(toFile);
-            toFile.Write("Path Length: ");
-            toFile.WriteLine(testPath.Count);
-            toFile.Write("Node Expansions: ");
-            toFile.WriteLine(m.NodeExpansions);
+            m.ConsoleASCIIPrintoutFromStack(writer);
+            writer.Write("Path Length: ");
+            writer.WriteLine(testPath.Count);
+            writer.Write("Node Expansions: ");
+            writer.WriteLine(m.NodeExpansions);
             m.Reset();
 
-
-            toFile.WriteLine("\n");
-            toFile.WriteLine("Uninformed search data testing...");
-            toFile.WriteLine("\n");
-            DepthSearchAllPermutations(allPermutations, m, toFile);
+            /*
+            writer.WriteLine("\n");
+            writer.WriteLine("Uninformed search data testing...");
+            writer.WriteLine("\n");
+            DepthSearchAllPermutations(allPermutations, m, writer);
             m.Reset();
-            toFile.WriteLine("\n");
-            BreadthSearchAllPermutations(allPermutations, m, toFile);
+            writer.WriteLine("\n");
+            BreadthSearchAllPermutations(allPermutations, m, writer);
             m.Reset();
-            toFile.Close();
+            writer.Close();
+            */
         }
 
         /// <summary>
@@ -257,7 +267,7 @@ namespace AI_Assignment
         /// <param name="allDir"></param>
         /// <param name="m"></param>
         /// <param name="toFile"></param>
-        static void DepthSearchAllPermutations(List<Direction[]> allDir, Map m, StreamWriter toFile)
+        static void DepthSearchAllPermutations(List<Direction[]> allDir, Map m, TextWriter toFile)
         {
             toFile.WriteLine("Breadth Search for every preferential order of direction: ");
             Dictionary<int, int> path = new Dictionary<int, int>();
@@ -294,7 +304,7 @@ namespace AI_Assignment
         /// <param name="allDir"></param>
         /// <param name="m"></param>
         /// <param name="toFile"></param>
-        static void BreadthSearchAllPermutations(List<Direction[]> allDir, Map m, StreamWriter toFile)
+        static void BreadthSearchAllPermutations(List<Direction[]> allDir, Map m, TextWriter toFile)
         {
             toFile.WriteLine("Breadth Search for every preferential order of direction: ");
             Dictionary<int, int> path = new Dictionary<int, int>();
